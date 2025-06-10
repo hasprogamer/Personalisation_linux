@@ -6,12 +6,13 @@ sleep 1
 pkg update -y && pkg upgrade -y
 
 # Installation des paquets nécessaires
-echo "Installation de zsh, git, curl, neofetch, et autres programmes nécessaires..."
+echo "Installation des dependence.."
 sleep 1
 pkg install -y zsh git curl neofetch figlet lolcat cmatrix micro
 
 # Installer Oh My Zsh
-echo "Installation de Oh My Zsh..."
+echo "Installation du Nouveau bureau..."
+sleep 1
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Définir Zsh comme shell par défaut
@@ -28,13 +29,15 @@ cat << 'EOF' >> ~/.zshrc
 # Nettoyage et bienvenue
 clear
 date | lolcat
-figlet "Shark" | lolcat
+figlet "Secret lab" | lolcat
 neofetch
 
 # Alias utiles
 alias update='pkg update && pkg upgrade -y'
 alias cls='clear'
 alias edit='micro ~/.zshrc'
+alias a='cd'
+ alias back='source ~/.zshrc'
 EOF
 
 echo
