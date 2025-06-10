@@ -78,25 +78,7 @@ alias edit='micro ~/.zshrc'
 \___ \ / _ \/ __| '__/ _ \ __| | |/ _` | '_ \
  ___) |  __/ (__| | |  __/ |_  | | (_| | |_) |
 |____/ \___|\___|_|  \___|\__| |_|\__,_|_.__/
-                                                                                           -o          o-         
-          +hydNNNNdyh+             
-        +mMMMMMMMMMMMMm+          
-      `dMMm:NMMMMMMN:mMMd`        
-      hMMMMMMMMMMMMMMMMMMh      
-  ..  yyyyyyyyyyyyyyyyyyyy  ..  
-.mMMm`MMMMMMMMMMMMMMMMMMMM`mMMm.
-:MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:   
-:MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM: 
-:MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:  
-:MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:
--MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM-
- +yy+ MMMMMMMMMMMMMMMMMMMM +yy+
-      mMMMMMMMMMMMMMMMMMMm
-      `/++MMMMh++hMMMM++/
-          MMMMo  oMMMM
-          MMMMo  oMMMM
-          oNMm-  -mMNs
-
+                                                                                  
 📅 [ate du jour]   ← colorée avec lolcat
 ████████████████    ← ASCII Art "Shark"
 OS: Android
