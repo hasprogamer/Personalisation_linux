@@ -1,35 +1,40 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
 # Mise à jour
-echo "Mise à jour de Termux..."
+echo " Mise à jour de Termux..." | lolcat
 sleep 1
 pkg update -y && pkg upgrade -y
 
 # Installation des paquets nécessaires
-echo "Installation des dependence.."
+echo "📦 Installation des dépendances..." | lolcat
 sleep 1
 pkg install -y zsh git curl neofetch figlet lolcat cmatrix micro
 
-# Installer Oh My Zsh
-echo "Installation du Nouveau bureau..."
+# Installation de Oh My Zsh
+echo "🎨 Installation du bureau ZSH..." | lolcat
 sleep 1
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Définir Zsh comme shell par défaut
 chsh -s zsh
-echo "Paramétrage du système..."
+
+# Installer les plugins Zsh
+echo "🔌 Installation des plugins ZSH..." | lolcat
 sleep 1
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
-# Appliquer un thème simple
+# Modifier le thème et activer les plugins dans ~/.zshrc
 sed -i 's/^ZSH_THEME=.*/ZSH_THEME="agnoster"/' ~/.zshrc
+sed -i 's/^plugins=(.*)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting history)/' ~/.zshrc
 
-# Ajouter message de bienvenue et alias dans ~/.zshrc
+# Ajouter un message de bienvenue et des alias
 cat << 'EOF' >> ~/.zshrc
 
 # Nettoyage et bienvenue
 clear
 date | lolcat
-figlet "Secret lab" | lolcat
+figlet "Secret Lab" | lolcat
 neofetch
 
 # Alias utiles
@@ -37,7 +42,7 @@ alias update='pkg update && pkg upgrade -y'
 alias cls='clear'
 alias edit='micro ~/.zshrc'
 alias a='cd'
- alias back='source ~/.zshrc'
+alias back='source ~/.zshrc'
 EOF
 
 echo
