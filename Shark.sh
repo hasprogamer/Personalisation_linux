@@ -1,72 +1,104 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
-# Mise à jour
-echo " Mise à jour de Termux..." | lolcat
-sleep 1
-pkg update -y && pkg upgrade -y
+# Installe les paquets nécessaires
+pkg update -y
+pkg install -y zsh git curl figlet lolcat neofetch cmatrix micro ranger
 
-# Installation des paquets nécessaires
-echo " Installation des dépendances..." | lolcat
-sleep 1
-pkg install -y zsh git curl neofetch figlet lolcat cmatrix micro
-
-# Installation de Oh My Zsh
-echo " Installation du bureau ZSH..." | lolcat
-sleep 1
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
-# Définir Zsh comme shell par défaut
+# Change le shell par défaut en zsh
 chsh -s zsh
 
-# Définir ZSH_CUSTOM
+# Installe Oh My Zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Installe les plugins Zsh
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-
-# Installer les plugins Zsh
-echo " Installation des plugins ZSH..." | lolcat
-sleep 1
 git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
-git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 
-# Installer Powerlevel10k
-echo -e "\e[92m[+] Clonage de Powerlevel10k...\e[0m"
+# Installe le thème Powerlevel10k
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
 
-# Fichier .zshrc
-ZSHRC="$HOME/.zshrc"
+# Prépare le fichier de config de Neofetch
+mkdir -p ~/.config/neofetch
+neofetch --print_config > ~/.config/neofetch/config.conf
+sed -i 's/^print_user_at_host=.*/print_user_at_host="off"/' ~/.config/neofetch/config.conf
+echo 'print_info() { info title "Utilisateur" "Rayfoul@shark-terminal" }' >> ~/.config/neofetch/config.conf
 
-if [ -f "$ZSHRC" ]; then
-  echo -e "\e[92m[+] Mise à jour du fichier .zshrc avec le thème Powerlevel10k...\e[0m"
-  # Remplacer l'ancien thème
-  if grep -q '^ZSH_THEME=' "$ZSHRC"; then
-    sed -i 's/^ZSH_THEME=.*/ZSH_THEME="powerlevel10k\/powerlevel10k"/' "$ZSHRC"
-  else
-    echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' >> "$ZSHRC"
-  fi
-else
-  echo -e "\e[92m[+] Création du fichier .zshrc avec le thème Powerlevel10k...\e[0m"
-  echo 'ZSH_THEME="powerlevel10k/powerlevel10k"' > "$ZSHRC"
+# Prépare la config de Micro
+mkdir -p ~/.config/micro
+cat > ~/.config/micro/settings.json <<EOF
+{
+  "colorscheme": "solarized-dark",
+  "autosave": true,
+  "tabsize": 4,
+  "softwrap": true,
+  "clipboard": "external"
+}
+EOF
+
+# Génère .zshrc
+cat > ~/.zshrc <<'EOF'
+# Instant prompt (Oh My Zsh)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Activer les plugins
-sed -i 's/^plugins=(.*)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting history)/' "$ZSHRC"
-
-# Ajouter message de bienvenue et alias
-cat << 'EOF' >> "$ZSHRC"
-
-# Nettoyage et bienvenue
+# Message de bienvenue stylé
+function matrix_intro() {
+  cmatrix -b &
+  pid=$!
+  sleep 2.5
+  kill $pid
+  clear
+}
+matrix_intro
 clear
 date | lolcat
 figlet "Secret Lab" | lolcat
 neofetch
 
-# Alias utiles
-alias update='pkg update && pkg upgrade -y'
+# Oh My Zsh
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting history)
+
+source $ZSH/oh-my-zsh.sh
+
+# Historique intelligent
+HISTFILE=~/.zsh_history
+HISTSIZE=1000
+SAVEHIST=1000
+setopt HIST_IGNORE_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt INC_APPEND_HISTORY
+
+# Auto-complétion améliorée
+autoload -Uz compinit
+compinit
+
+# Alias
 alias cls='clear'
+alias update='pkg update && pkg upgrade'
+alias py='python3'
+alias pip='pip3'
 alias edit='micro ~/.zshrc'
-alias a='cd'
 alias back='source ~/.zshrc'
+alias new='micro'
+alias a='cd'
+alias send='github.sh'
+
+# Langue
+export LANG=fr_FR.UTF-8
+
+# Powerlevel10k
+POWERLEVEL9K_DISABLE_GITSTATUS=true
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 EOF
 
-echo
-echo -e "\e[92m Installation terminée ! Relance Termux ou tape \e[1mzsh\e[0m pour activer la configuration.\e[0m"
-echo -e " Ensuite, exécute \e[1mp10k configure\e[0m pour personnaliser Powerlevel10k.\e[0m"
+# Compile gitstatus (Powerlevel10k)
+cd ~/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus && make
+
+# Message de fin
+echo -e "\n\033[1;32m✅ Configuration terminée !\033[0m"
+echo "Relance ton terminal, ou tape : exec zsh"
